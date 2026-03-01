@@ -5,6 +5,7 @@ from Model.Map.RoadNetwork import RoadNetwork
 from Model.datosGPS.gps_simulation import gps_simulation
 from Model.datosMotor.engine_simulation import Engine
 from Model.datosPaciente.paciente import PacienteSimulado
+from Model.Prediccion.analisis_layer import AnalisisLayer
 
 CAULE_NODE_ID = 11112307117  # Hospital de León - CAULE
 
@@ -45,6 +46,9 @@ class Model:
         self.paciente = PacienteSimulado()
         self.posicion = gps_simulation(self.road, nodo_actual=node_ini)
         
+        # Capa de Predicción y Análisis
+        self.analisis = AnalisisLayer(self.road)
+        
         # Montamos la ambulancia "física"
         self.ambulancia_fisica = fisical_ambulance(
             engine=self.engine,
@@ -55,6 +59,14 @@ class Model:
     def tick(self):
         """Simula avance de ciclo: motor, paciente, etc."""
         self.ambulancia_fisica.tick()
+
+    def calcular_rutas(self, origin_id: int, dest_id: int):
+        """Delega el cálculo de rutas puntuadas a la capa de análisis."""
+        return self.analisis.calcular_rutas(origin_id, dest_id)
+
+    def recomendar_hospital(self):
+        """Recomienda hospitales desde la posición actual usando la capa de análisis."""
+        return self.analisis.recomendar_hospital(self.posicion.nodo_actual)
 
     def mover_ambulancia_a(self, nuevo_node_id):
         """Actualiza el nodo/posición de la ambulancia (según la ruta)"""

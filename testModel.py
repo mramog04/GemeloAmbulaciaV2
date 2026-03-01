@@ -27,11 +27,14 @@ def main():
 
     # Calcula la ruta
     print("\n🔍 Calculando ruta...")
-    route = model.road.calculate_route(model.posicion.nodo_actual, destino.node_id)
-    if not route:
+    scored_routes = model.analisis.calcular_rutas(model.posicion.nodo_actual, destino.node_id)
+    if not scored_routes:
         print("No se pudo calcular ruta.")
         return
 
+    mejor = scored_routes[0]
+    print(f"   → Ruta seleccionada: {mejor.label} (score={mejor.score:.4f})")
+    route = mejor.route
     model.road.print_route_details(route)
 
     print("\n🟢 Iniciando trayecto SIMULADO nodo a nodo...\n")
