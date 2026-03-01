@@ -1,3 +1,10 @@
+# Python cache
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *.pyo
+*.pyd
+*.pyc
+
+# Datos de persistencia generados automáticamente
+datos_persistencia/snapshots.csv
