@@ -3,4 +3,9 @@
 *.pyo
 *.pyd
 *.pyc
+*.cpython-312.pyc
+*.cpython-313.pyc
+*.cpython-314.pyc
+
+
 datos_persistencia/
