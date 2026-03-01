@@ -2,4 +2,5 @@
 *.py[cod]
 *.pyo
 *.pyd
+*.pyc
 datos_persistencia/
