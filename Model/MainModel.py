@@ -6,6 +6,7 @@ from Model.datosGPS.gps_simulation import gps_simulation
 from Model.datosMotor.engine_simulation import Engine
 from Model.datosPaciente.paciente import PacienteSimulado
 from Model.Prediccion.analisis_layer import AnalisisLayer
+from Model.Persistencia.persistencia_layer import PersistenciaLayer
 
 CAULE_NODE_ID = 11112307117  # Hospital de León - CAULE
 
@@ -56,9 +57,19 @@ class Model:
             paciente=self.paciente
         )
 
+        # Capa de Persistencia
+        self.persistencia = PersistenciaLayer(ruta_csv='datos_persistencia/snapshots.csv')
+        self.ambulancia_info.capa_persistencia = self.persistencia
+
     def tick(self):
-        """Simula avance de ciclo: motor, paciente, etc."""
+        """Simula avance de ciclo: motor, paciente, etc. Guarda snapshot en CSV."""
         self.ambulancia_fisica.tick()
+        snapshot_fisico = self.ambulancia_fisica.snapshot()
+        self.persistencia.guardar_snapshot(snapshot_fisico)
+
+    def get_ruta_persistencia(self) -> str:
+        """Devuelve la ruta del CSV de persistencia."""
+        return self.persistencia.get_ruta_csv()
 
     def calcular_rutas(self, origin_id: int, dest_id: int):
         """Delega el cálculo de rutas puntuadas a la capa de análisis."""

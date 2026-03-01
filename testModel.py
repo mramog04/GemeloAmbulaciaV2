@@ -1,5 +1,7 @@
 import time
 from Model.MainModel import Model
+from Model.Prediccion.route_calculator.astar_strategy import AStarRouteStrategy
+from Model.Prediccion.route_calculator.ch_strategy import CHRouteStrategy
 
 def main():
     print("="*60)
@@ -52,6 +54,32 @@ def main():
 
     print("\n✅ Ruta completada. Nodo final:", model.posicion.nodo_actual)
     print("Snapshot final:", model.snapshot())
+
+    # === COMPARATIVA DE ESTRATEGIAS DE RUTA ===
+    print("\n" + "="*50)
+    print("=== COMPARATIVA DE ESTRATEGIAS DE RUTA ===")
+    print("="*50)
+
+    origin = model.posicion.nodo_actual
+
+    from Model.Prediccion.route_calculator.dijkstra_strategy import DijkstraRouteStrategy
+
+    configs = [
+        ("Dijkstra", DijkstraRouteStrategy()),
+        ("A*",       AStarRouteStrategy()),
+        ("CH",       CHRouteStrategy()),
+    ]
+
+    for nombre, estrategia in configs:
+        rutas = estrategia.calculate(model.road, origin, destino.node_id)
+        if rutas:
+            mejor_r = rutas[0]
+            print(f"{nombre:<10}: {len(rutas)} rutas → mejor: \"{mejor_r.label}\" "
+                  f"(score={mejor_r.score:.4f}, tiempo={mejor_r.breakdown['tiempo']:.1f}min)")
+        else:
+            print(f"{nombre:<10}: sin rutas calculadas")
+
+    print(f"\n💾 Snapshots guardados: {model.persistencia.get_total_ticks()} → {model.get_ruta_persistencia()}")
 
 if __name__ == "__main__":
     main()
