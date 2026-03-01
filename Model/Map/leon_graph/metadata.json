@@ -1,0 +1,85 @@
+{
+  "city": "León",
+  "region": "Castilla y León",
+  "country": "Spain",
+  "processed_date": "2026-02-06 18:41:23",
+  "total_nodes": 2627,
+  "total_edges": 5004,
+  "total_hospitals": 4,
+  "hospitals": [
+    {
+      "name": "Hospital de León - CAULE",
+      "node_id": 11112307117,
+      "lat": 42.6133147,
+      "lon": -5.5697424,
+      "original_lat": 42.6134,
+      "original_lon": -5.5701
+    },
+    {
+      "name": "Hospital San Juan de Dios",
+      "node_id": 593264750,
+      "lat": 42.598817,
+      "lon": -5.5659565,
+      "original_lat": 42.5987,
+      "original_lon": -5.5671
+    },
+    {
+      "name": "Centro de Salud Armunia",
+      "node_id": 595587515,
+      "lat": 42.5808275,
+      "lon": -5.5616216,
+      "original_lat": 42.5812,
+      "original_lon": -5.5623
+    },
+    {
+      "name": "Centro de Salud La Condesa",
+      "node_id": 288593241,
+      "lat": 42.604063,
+      "lon": -5.5834578,
+      "original_lat": 42.6045,
+      "original_lon": -5.5834
+    }
+  ],
+  "bbox": {
+    "north": 42.6354069,
+    "south": 42.5478593,
+    "east": -5.5383717,
+    "west": -5.6209192
+  },
+  "default_speeds": {
+    "motorway": 120,
+    "motorway_link": 80,
+    "trunk": 100,
+    "trunk_link": 70,
+    "primary": 50,
+    "primary_link": 40,
+    "secondary": 50,
+    "secondary_link": 40,
+    "tertiary": 40,
+    "tertiary_link": 30,
+    "residential": 30,
+    "living_street": 20,
+    "service": 20,
+    "unclassified": 40,
+    "road": 30,
+    "default": 30
+  },
+  "risk_levels": {
+    "motorway": 0.1,
+    "motorway_link": 0.2,
+    "trunk": 0.15,
+    "trunk_link": 0.25,
+    "primary": 0.3,
+    "primary_link": 0.3,
+    "secondary": 0.4,
+    "secondary_link": 0.4,
+    "tertiary": 0.5,
+    "tertiary_link": 0.5,
+    "residential": 0.6,
+    "living_street": 0.7,
+    "service": 0.5,
+    "unclassified": 0.5,
+    "road": 0.6,
+    "default": 0.5
+  }
+}
