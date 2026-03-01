@@ -2,16 +2,19 @@ import tkinter as tk
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from Model.Visualizacion.app_state import FaseSimulacion
+
+_EMPTY_OFFSETS = np.empty((0, 2))
 
 
 class VentanaMapa(tk.Toplevel):
     def __init__(self, master, state):
         super().__init__(master)
         self.state = state
-        self.title("🗺️ Mapa — Gemelo Digital Ambulancia")
+        self.title("Mapa - Gemelo Digital Ambulancia")
         self.geometry("900x700")
         self.protocol("WM_DELETE_WINDOW", master.destroy)
 
@@ -23,7 +26,7 @@ class VentanaMapa(tk.Toplevel):
         self.ax.set_xticks([])
         self.ax.set_yticks([])
         self.ax.set_facecolor('#f8f8f8')
-        self.ax.set_title("🗺️ Mapa — Gemelo Digital Ambulancia")
+        self.ax.set_title("Mapa - Gemelo Digital Ambulancia")
 
         # Draw static edges (once)
         for edge in road.all_edges:
@@ -74,7 +77,7 @@ class VentanaMapa(tk.Toplevel):
         if node_obj:
             self._scat_amb.set_offsets([[node_obj.lon, node_obj.lat]])
         else:
-            self._scat_amb.set_offsets([])
+            self._scat_amb.set_offsets(_EMPTY_OFFSETS)
 
         # Patient marker
         if state.fase in (FaseSimulacion.YENDO_A_PACIENTE, FaseSimulacion.EN_PACIENTE) \
@@ -83,9 +86,9 @@ class VentanaMapa(tk.Toplevel):
             if pac_node:
                 self._scat_pac.set_offsets([[pac_node.lon, pac_node.lat]])
             else:
-                self._scat_pac.set_offsets([])
+                self._scat_pac.set_offsets(_EMPTY_OFFSETS)
         else:
-            self._scat_pac.set_offsets([])
+            self._scat_pac.set_offsets(_EMPTY_OFFSETS)
 
         # Hospital destino marker
         if state.fase == FaseSimulacion.YENDO_A_HOSPITAL and state.hospital_destino_node_id:
@@ -93,9 +96,9 @@ class VentanaMapa(tk.Toplevel):
             if h_node:
                 self._scat_hdest.set_offsets([[h_node.lon, h_node.lat]])
             else:
-                self._scat_hdest.set_offsets([])
+                self._scat_hdest.set_offsets(_EMPTY_OFFSETS)
         else:
-            self._scat_hdest.set_offsets([])
+            self._scat_hdest.set_offsets(_EMPTY_OFFSETS)
 
         # Route lines
         nodes = state.ruta_activa_nodes

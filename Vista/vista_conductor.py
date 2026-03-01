@@ -126,53 +126,52 @@ class VentanaConductor(tk.Toplevel):
             h_name = h_node.hospital.name if h_node and h_node.hospital else "Hospital"
             destino_label = f"Hospital: {h_name}"
 
-        # Use stored label set when route was confirmed
         alg_label = state.ruta_activa_label
 
         tk.Label(f, text="🚑 CONDUCTOR — En ruta", font=("Arial", 13, "bold")).pack(pady=(14, 2))
         tk.Label(f, text=f"Ruta: {alg_label}  │  {destino_label}",
                  font=("Arial", 10)).pack()
-        ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=6)
+        ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=8)
 
-        # Next street
-        tk.Label(f, text="📍 SIGUIENTE CALLE:", font=("Arial", 11, "bold")).pack(anchor='w', padx=16)
-        edges = state.ruta_activa_edges
+        # Route progress
+        nodes = state.ruta_activa_nodes
         idx = state.ruta_idx
-        if edges and idx < len(edges):
-            edge = edges[idx]
-            calle = _edge_name(edge, idx)
-            dist = getattr(edge, 'length_m', 0)
-            dist_str = _format_dist(dist)
-            street_frame = tk.Frame(f, relief='groove', bd=2, bg='#eef4ff')
-            street_frame.pack(fill='x', padx=16, pady=4)
-            tk.Label(street_frame, text=f"  ➡️  {calle}", font=("Arial", 12, "bold"),
-                     bg='#eef4ff').pack(anchor='w', pady=(6, 2))
-            tk.Label(street_frame, text=f"      en {dist_str}",
-                     font=("Arial", 10), bg='#eef4ff').pack(anchor='w', pady=(0, 6))
-        else:
-            tk.Label(f, text="  (Llegando al destino)", font=("Arial", 11), fg='green').pack(padx=16)
-
-        # Progress bar
-        total = len(state.ruta_activa_nodes)
-        current = min(state.ruta_idx, total)
-        prog_text = f"Progreso: {current} / {total} nodos"
-        tk.Label(f, text=prog_text, font=("Arial", 10)).pack(anchor='w', padx=16, pady=(8, 0))
-        prog_bar = ttk.Progressbar(f, maximum=max(total, 1), value=current, length=440)
-        prog_bar.pack(padx=16, pady=4)
+        total = len(nodes)
+        tk.Label(f, text=f"Progreso: {idx}/{total} nodos",
+                 font=("Arial", 10)).pack(anchor='w', padx=16)
+        progress_bar = ttk.Progressbar(f, maximum=max(total, 1), value=idx, length=460)
+        progress_bar.pack(padx=16, pady=4)
 
         ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=6)
 
-        # Engine info
-        tk.Label(f, text="🔧 MOTOR", font=("Arial", 11, "bold")).pack(anchor='w', padx=16)
-        telem = state.model.engine.get_telemetry()
-        health = state.model.engine.check_health()
-        severity = health.get('severity', 'NORMAL')
-        score = health.get('health_score', 100)
-        sev_color = {'NORMAL': 'green', 'WARNING': 'orange', 'CRITICAL': 'red'}.get(severity, 'green')
+        # Next steps
+        tk.Label(f, text="Próximos tramos:", font=("Arial", 10, "bold")).pack(anchor='w', padx=16)
+        edges = state.ruta_activa_edges
+        shown = 0
+        for i in range(idx, min(idx + 4, len(edges))):
+            edge = edges[i]
+            name = _edge_name(edge, i)
+            dist = _format_dist(getattr(edge, 'length_m', 0))
+            tk.Label(f, text=f"  → {name}  ({dist})",
+                     font=("Arial", 9), fg='#444').pack(anchor='w', padx=24)
+            shown += 1
+        if shown == 0:
+            tk.Label(f, text="  (llegando al destino)", font=("Arial", 9),
+                     fg='#888').pack(anchor='w', padx=24)
 
-        tk.Label(f, text=f"Temp: {telem.get('temperature', 0):.0f}°C  │  "
-                         f"RPM: {telem.get('rpm', 0):.0f}  │  "
-                         f"[{severity}]",
+        ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=6)
+
+        # Engine telemetry
+        telem = state.model.engine.get_telemetry()
+        score = telem.get('health_score', 100)
+        severity = telem.get('severity', 'OK')
+        sev_color = {'OK': 'green', 'WARNING': 'orange', 'CRITICAL': 'red'}.get(severity, 'black')
+
+        tk.Label(f, text="Motor:", font=("Arial", 10, "bold")).pack(anchor='w', padx=16)
+        tk.Label(f,
+                 text=f"Temp: {telem.get('temperature', 0):.1f}°C  │  "
+                      f"RPM: {telem.get('rpm', 0):.0f}  │  "
+                      f"[{severity}]",
                  font=("Arial", 10), fg=sev_color).pack(anchor='w', padx=16)
 
         health_bar = ttk.Progressbar(f, maximum=100, value=score, length=440)
@@ -183,14 +182,15 @@ class VentanaConductor(tk.Toplevel):
 
         ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=6)
 
-        # Critical patient alert
-        paciente = state.model.paciente
-        if paciente.gravedad == "grave":
-            self._alert_label = tk.Label(f, text="🚨 ALERTA PACIENTE CRÍTICO",
-                                         font=("Arial", 12, "bold"), fg="white", bg="red",
-                                         relief='raised', padx=10, pady=6)
-            self._alert_label.pack(fill='x', padx=16, pady=4)
-            self._blink()
+        # ----------------------------------------------------------------
+        if state.fase == FaseSimulacion.YENDO_A_HOSPITAL:
+            paciente = state.model.paciente
+            if paciente.gravedad == "grave":
+                self._alert_label = tk.Label(f, text="🚨 ALERTA PACIENTE CRÍTICO",
+                                             font=("Arial", 12, "bold"), fg="white", bg="red",
+                                             relief='raised', padx=10, pady=6)
+                self._alert_label.pack(fill='x', padx=16, pady=4)
+                self._blink()
 
         # Footer controls
         ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=4)
@@ -233,36 +233,11 @@ class VentanaConductor(tk.Toplevel):
 
         tk.Label(f, text="⏳ Esperando decisión del médico...",
                  font=("Arial", 11), fg='#0055aa').pack()
-        tk.Label(f, text="El médico está seleccionando hospital.",
-                 font=("Arial", 10), fg='#666').pack(pady=4)
-
-        ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=12)
-
-        telem = state.model.engine.get_telemetry()
-        tk.Label(f, text=f"🔧 MOTOR: Temp {telem.get('temperature', 0):.0f}°C  │  "
-                         f"RPM {telem.get('rpm', 0):.0f}  │  [IDLE]",
-                 font=("Arial", 10)).pack()
 
     # ------------------------------------------------------------------
     def _build_fin(self):
-        state = self.state
         f = self._frame
-
-        road = state.model.road
-        h_node = road.get_node(state.hospital_destino_node_id)
-        h_name = h_node.hospital.name if h_node and h_node.hospital else "Hospital destino"
-
         tk.Label(f, text="✅ MISIÓN COMPLETADA", font=("Arial", 15, "bold"),
-                 fg='green').pack(pady=(30, 12))
-        tk.Label(f, text=f"Llegaste a: {h_name}", font=("Arial", 12)).pack()
-        tk.Label(f, text="Paciente entregado correctamente.", font=("Arial", 11),
-                 fg='#444').pack(pady=6)
-
-        ttk.Separator(f, orient='horizontal').pack(fill='x', padx=10, pady=16)
-
-        def nueva_mision():
-            self.master.event_generate("<<NuevaMision>>")
-
-        tk.Button(f, text="🔄 Nueva Misión", command=nueva_mision,
-                  font=("Arial", 12, "bold"), bg='#0055ff', fg='white',
-                  padx=14, pady=8).pack(pady=12)
+                 fg='green').pack(pady=(40, 10))
+        tk.Label(f, text="Paciente entregado en el hospital.",
+                 font=("Arial", 11)).pack()

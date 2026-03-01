@@ -195,7 +195,11 @@ class VentanaMedico(tk.Toplevel):
 
         # Get scored hospitals
         nodo_actual = state.model.posicion.nodo_actual
-        scored_hospitals = state.model.analisis.recomendar_hospital(nodo_actual)
+        scored_hospitals = state.model.analisis.recomendar_hospital(
+            nodo_actual,
+            afeccion=state.afeccion_paciente,
+            afecciones_db=AFECCIONES_DB
+        )
 
         afeccion_data = AFECCIONES_DB.get(state.afeccion_paciente, {})
         required_specs = afeccion_data.get('specialties_required', [])
