@@ -1,0 +1,10 @@
+BG       = "#3c3f41"   # Fondo principal
+BG_CARD  = "#2b2e30"   # Fondo tarjetas/paneles
+FG       = "#d4d4d4"   # Texto principal
+FG_DIM   = "#888888"   # Texto secundario
+ACCENT   = "#4a9eff"   # Azul acento
+SUCCESS  = "#57a64a"   # Verde OK
+WARNING  = "#f0a30a"   # Naranja warning
+DANGER   = "#cc3333"   # Rojo crítico
+GOLD     = "#ffd700"   # Dorado recomendados
+FONT     = "Segoe UI"  # Fuente principal

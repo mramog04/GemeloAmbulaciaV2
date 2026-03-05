@@ -1,6 +1,7 @@
 import random
 import tkinter as tk
 from tkinter import ttk, messagebox
+from ttkthemes import ThemedTk
 
 from Model.MainModel import Model
 from Model.Visualizacion.afecciones_db import AFECCIONES_DB
@@ -10,6 +11,7 @@ from Model.Visualizacion.route_utils import calcular_rutas_por_algoritmo
 from Vista.vista_mapa import VentanaMapa
 from Vista.vista_conductor import VentanaConductor
 from Vista.vista_medico import VentanaMedico
+from Vista import theme
 
 
 def _do_tick(state):
@@ -85,33 +87,54 @@ def iniciar_simulacion(root, nombre, afeccion, modo_auto):
 
 
 def main():
-    root = tk.Tk()
+    root = ThemedTk(theme="equilux")
     root.title("🚑 Gemelo Digital — Configuración")
-    root.geometry("400x350")
+    root.geometry("440x380")
     root.resizable(False, False)
+    root.configure(bg=theme.BG)
+
+    _FONT_LBL = (theme.FONT, 11)
+    _FONT_ENTRY = (theme.FONT, 11)
+    _FONT_BTN = (theme.FONT, 12, "bold")
 
     # ── Nombre del paciente ──────────────────────────────────────
-    tk.Label(root, text="Nombre del paciente:", font=("Arial", 11)).pack(pady=(20, 4))
-    entry_nombre = tk.Entry(root, font=("Arial", 11), width=30)
-    entry_nombre.pack()
+    tk.Label(root, text="Nombre del paciente:", font=_FONT_LBL,
+             fg=theme.FG, bg=theme.BG).pack(pady=(24, 4))
+    entry_nombre = tk.Entry(root, font=_FONT_ENTRY, width=30,
+                            bg=theme.BG_CARD, fg=theme.FG,
+                            insertbackground=theme.FG, relief='flat',
+                            highlightthickness=1,
+                            highlightcolor=theme.ACCENT,
+                            highlightbackground=theme.FG_DIM)
+    entry_nombre.pack(ipady=4)
 
     # ── Afección ─────────────────────────────────────────────────
-    tk.Label(root, text="Afección:", font=("Arial", 11)).pack(pady=(12, 4))
+    tk.Label(root, text="Afección:", font=_FONT_LBL,
+             fg=theme.FG, bg=theme.BG).pack(pady=(14, 4))
     combo_afeccion = ttk.Combobox(root, values=list(AFECCIONES_DB.keys()),
-                                  state='readonly', width=34, font=("Arial", 10))
+                                  state='readonly', width=34, font=(theme.FONT, 10))
     combo_afeccion.pack()
     if AFECCIONES_DB:
         combo_afeccion.current(0)
 
     # ── Modo ─────────────────────────────────────────────────────
-    tk.Label(root, text="Modo de ejecución:", font=("Arial", 11)).pack(pady=(12, 4))
+    tk.Label(root, text="Modo de ejecución:", font=_FONT_LBL,
+             fg=theme.FG, bg=theme.BG).pack(pady=(14, 4))
     modo_var = tk.StringVar(value="manual")
-    mode_frame = tk.Frame(root)
+    mode_frame = tk.Frame(root, bg=theme.BG)
     mode_frame.pack()
     tk.Radiobutton(mode_frame, text="🔄 Automático", variable=modo_var,
-                   value="auto", font=("Arial", 10)).pack(side='left', padx=10)
+                   value="auto", font=(theme.FONT, 10),
+                   fg=theme.FG, bg=theme.BG,
+                   selectcolor=theme.BG_CARD,
+                   activebackground=theme.BG,
+                   activeforeground=theme.ACCENT).pack(side='left', padx=12)
     tk.Radiobutton(mode_frame, text="🖱️ Manual", variable=modo_var,
-                   value="manual", font=("Arial", 10)).pack(side='left', padx=10)
+                   value="manual", font=(theme.FONT, 10),
+                   fg=theme.FG, bg=theme.BG,
+                   selectcolor=theme.BG_CARD,
+                   activebackground=theme.BG,
+                   activeforeground=theme.ACCENT).pack(side='left', padx=12)
 
     # ── Botón iniciar ─────────────────────────────────────────────
     def on_iniciar():
@@ -128,8 +151,9 @@ def main():
         iniciar_simulacion(root, nombre, afeccion, modo_auto)
 
     tk.Button(root, text="▶ INICIAR SIMULACIÓN", command=on_iniciar,
-              font=("Arial", 12, "bold"), bg='#0055ff', fg='white',
-              padx=14, pady=8).pack(pady=20)
+              font=_FONT_BTN, bg=theme.ACCENT, fg="white",
+              activebackground="#3a8eef", activeforeground="white",
+              relief='flat', padx=14, pady=8).pack(pady=24)
 
     root.mainloop()
 
