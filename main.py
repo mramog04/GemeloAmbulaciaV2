@@ -67,9 +67,12 @@ def iniciar_simulacion(root, nombre, afeccion, modo_auto):
     ventana_mapa = VentanaMapa(root, state)
     ventana_conductor = VentanaConductor(root, state, tick_manual)
     ventana_medico = VentanaMedico(root, state)
+    state._ventanas = [ventana_mapa, ventana_conductor, ventana_medico]
 
     # 7. Tick loop
     def tick_loop():
+        if state.fase == FaseSimulacion.FIN:
+            return  # detener el loop cuando termine
         if state.modo_automatico:
             _do_tick(state)
         root.after(state.tick_interval_ms, tick_loop)
