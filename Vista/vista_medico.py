@@ -386,7 +386,44 @@ class VentanaMedico(tk.Toplevel):
 
     # ------------------------------------------------------------------
     def _build_fin(self, parent):
+        state = self.state
+
         self._lbl(parent, "✅ MISIÓN COMPLETADA",
                   font=(theme.FONT, 14, "bold"), fg=theme.SUCCESS).pack(pady=(60, 10))
         self._lbl(parent, "El paciente fue entregado correctamente.",
                   font=(theme.FONT, 11), fg=theme.FG_DIM).pack()
+
+        ttk.Separator(parent, orient='horizontal').pack(fill='x', padx=40, pady=24)
+
+        def nueva_simulacion():
+            for v in getattr(state, '_ventanas', []):
+                try:
+                    v.destroy()
+                except Exception:
+                    pass
+            try:
+                self.master.deiconify()
+            except Exception:
+                pass
+
+        def cerrar_app():
+            try:
+                self.master.destroy()
+            except Exception:
+                pass
+
+        tk.Button(parent, text="🔄 Nueva simulación",
+                  command=nueva_simulacion,
+                  font=(theme.FONT, 11, "bold"),
+                  bg=theme.ACCENT, fg="white",
+                  activebackground="#3a8eef", activeforeground="white",
+                  relief='flat', padx=16, pady=10,
+                  width=20).pack(pady=(0, 8))
+
+        tk.Button(parent, text="❌ Cerrar aplicación",
+                  command=cerrar_app,
+                  font=(theme.FONT, 11),
+                  bg=theme.BG_CARD, fg=theme.DANGER,
+                  activebackground=theme.BG, activeforeground=theme.DANGER,
+                  relief='flat', padx=16, pady=10,
+                  width=20).pack()

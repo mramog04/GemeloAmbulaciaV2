@@ -224,14 +224,13 @@ class VentanaMapa(tk.Toplevel):
             if self._img_hdest is None:
                 self._scat_hdest.set_offsets(_EMPTY_OFFSETS)
 
-        # Route lines
+        # Route lines — fix ghost line on phase transition
         nodes = state.ruta_activa_nodes
-        if nodes:
-            all_nodes = [nodo_actual] + list(nodes)
-            idx = state.ruta_idx
+        idx = state.ruta_idx
 
-            # Past segment: from start to ruta_idx
-            past_nodes = all_nodes[:idx + 1]
+        if nodes and idx > 0:
+            # Past: nodos ya recorridos
+            past_nodes = nodes[:idx]
             if len(past_nodes) >= 2:
                 past_objs = [road.get_node(n) for n in past_nodes]
                 lons_p = [nd.lon for nd in past_objs if nd]
@@ -239,9 +238,12 @@ class VentanaMapa(tk.Toplevel):
                 self._line_past.set_data(lons_p, lats_p)
             else:
                 self._line_past.set_data([], [])
+        else:
+            self._line_past.set_data([], [])
 
-            # Ahead segment: from ruta_idx to end
-            ahead_nodes = all_nodes[idx:]
+        if nodes and idx < len(nodes):
+            # Ahead: nodos pendientes
+            ahead_nodes = nodes[idx:]
             if len(ahead_nodes) >= 2:
                 ahead_objs = [road.get_node(n) for n in ahead_nodes]
                 lons_a = [nd.lon for nd in ahead_objs if nd]
@@ -250,7 +252,6 @@ class VentanaMapa(tk.Toplevel):
             else:
                 self._line_route.set_data([], [])
         else:
-            self._line_past.set_data([], [])
             self._line_route.set_data([], [])
 
         self.canvas.draw_idle()

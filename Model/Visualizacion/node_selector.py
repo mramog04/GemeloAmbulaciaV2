@@ -1,15 +1,29 @@
 import math
 import random
+import networkx as nx
 
 
 def seleccionar_nodos_paciente(road, n=30):
     """
     Selecciona n nodos distribuidos uniformemente por cuadrícula lat/lon.
-    Excluye nodos de hospitales.
+    Excluye nodos de hospitales y restringe la selección a la componente
+    fuertemente conexa (SCC) más grande del grafo, garantizando conectividad.
     Devuelve List[int] con los node_ids seleccionados.
     """
+    # Construir grafo temporal para calcular SCCs
+    G = nx.DiGraph()
+    for node_id in road.nodes:
+        G.add_node(node_id)
+    for edge in road.all_edges:
+        G.add_edge(edge.origin.node_id, edge.destination.node_id)
+
+    # Obtener la SCC más grande
+    largest_scc = max(nx.strongly_connected_components(G), key=len)
+
+    # Filtrar candidatos: solo nodos en la SCC más grande, excluyendo hospitales
     hospital_ids = {node.node_id for node in road.get_hospitals()}
-    candidatos = [node for node_id, node in road.nodes.items() if node_id not in hospital_ids]
+    candidatos = [node for node_id, node in road.nodes.items()
+                  if node_id not in hospital_ids and node_id in largest_scc]
 
     lats = [nd.lat for nd in candidatos]
     lons = [nd.lon for nd in candidatos]
