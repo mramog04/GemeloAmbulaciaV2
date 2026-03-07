@@ -47,25 +47,24 @@ La aplicación cuenta con tres vistas principales, cada una orientada a un rol d
 
 ## 🏗️ Arquitectura del sistema
 
-El proyecto sigue el patrón **MVC (Modelo–Vista–Controlador)** estructurado por capas:
+El proyecto sigue el patrón **MV (Modelo–Vista)** estructurado por capas:
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                      VISTA (UI)                     │
+┌──────────────────────────────────────────────────────┐
+│                      VISTA (UI)                      │
 │  vista_mapa.py │ vista_conductor.py │ vista_medico.py│
-└────────────────────────┬────────────────────────────┘
+└────────────────────────┬─────────────────────────────┘
                          │  eventos / callbacks
 ┌────────────────────────▼────────────────────────────┐
-│                    CONTROLADOR                      │
 │                    main.py                          │
 └────────────────────────┬────────────────────────────┘
                          │  llama a
 ┌────────────────────────▼────────────────────────────┐
 │                      MODELO                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐ │
-│  │  Map /       │  │  Prediccion/ │  │ Paciente/ │ │
-│  │  Algoritmos  │  │  Motor (IA)  │  │ Vitales   │ │
-│  └──────────────┘  └──────────────┘  └───────────┘ │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐  │
+│  │  Map /       │  │  Prediccion/ │  │ Paciente/ │  │
+│  │  Algoritmos  │  │  Motor (IA)  │  │ Vitales   │  │
+│  └──────────────┘  └──────────────┘  └───────────┘  │
 │  ┌──────────────┐  ┌──────────────┐                 │
 │  │ Persistencia │  │ Visualización│                 │
 │  └──────────────┘  └──────────────┘                 │
@@ -259,8 +258,8 @@ La aplicación contempla 4 hospitales reales de la ciudad de León como nodos de
 | Hospital | Descripción |
 |----------|-------------|
 | Hospital de León (CAULE) | Hospital universitario de referencia |
-| Clínica San Francisco | Hospital privado en el centro |
-| Hospital del Bierzo | Nodo externo de referencia |
+| Centro de salud armunia | Centro de atención primaria |
+| Hospital San Juan de Dios | Hospital privado en el centro |
 | Centro de Salud La Condesa | Centro de atención primaria |
 
 ---
@@ -290,5 +289,5 @@ La aplicación contempla 4 hospitales reales de la ciudad de León como nodos de
 
 Proyecto desarrollado con fines académicos y de concurso.
 
-**Autores:** Equipo GemeloAmbulacia — Universidad de León  
+**Autores:** Equipo TuxMasters — Universidad de León  
 **Año:** 2024–2025
