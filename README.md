@@ -290,4 +290,4 @@ La aplicación contempla 4 hospitales reales de la ciudad de León como nodos de
 Proyecto desarrollado con fines académicos y de concurso.
 
 **Autores:** Equipo TuxMasters — Universidad de León  
-**Año:** 2024–2025
+**Año:** 2025–2026
